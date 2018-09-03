@@ -14,7 +14,7 @@ public class Parent extends BaseEntity {
     @Ignore
     private Integer yesar;
 
-    private Date birsthday;
+    private Date birthday;
 
     public Parent() {
         super();
@@ -37,11 +37,11 @@ public class Parent extends BaseEntity {
     }
 
     public Date getBirthday() {
-        return birsthday;
+        return birthday;
     }
 
     public void setBirthday(Date birthday) {
-        this.birsthday = birthday;
+        this.birthday = birthday;
     }
 
 
