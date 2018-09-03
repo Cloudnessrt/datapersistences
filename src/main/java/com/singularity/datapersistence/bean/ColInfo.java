@@ -1,8 +1,11 @@
 package com.singularity.datapersistence.bean;
 
 public class ColInfo {
+
+    //属性名
     private String name;
 
+    //类型
     private Class type;
 
     public String getName() {

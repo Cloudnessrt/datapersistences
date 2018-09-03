@@ -14,6 +14,10 @@ public class MysqlEntityDeal implements SqlEntityDealInterface {
     //日志
     private static Logger logger= LoggerFactory.getLogger(MysqlEntityDeal.class);
 
+    public MysqlEntityDeal() {
+        System.out.println("123");
+    }
+
     /**
      * 查询
      * @param object

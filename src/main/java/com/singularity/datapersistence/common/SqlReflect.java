@@ -105,7 +105,7 @@ public class SqlReflect {
             List<Field> oldFields = Reflect.getAllFieldByClass(clazz);
             for (Field field : oldFields) {
                 if(field.getDeclaredAnnotation(Ignore.class)==null){
-                    list.add(new ColInfo(field.getName().toLowerCase(),field.getType()));
+                    list.add(new ColInfo(field.getName(),field.getType()));
                     if(field.getDeclaredAnnotation(Id.class)!=null){
                         if(StringUtils.isEmpty(sqlBasicInfo.getPrimaryKey())){
                             sqlBasicInfo.setPrimaryKey(field.getName());

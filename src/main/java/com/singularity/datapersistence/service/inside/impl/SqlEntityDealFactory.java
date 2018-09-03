@@ -3,8 +3,12 @@ package com.singularity.datapersistence.service.inside.impl;
 import com.singularity.datapersistence.bean.ExecInfo;
 import com.singularity.datapersistence.common.Config;
 import com.singularity.datapersistence.service.inside.SqlEntityDealInterface;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 
 /**
  * 实体处理接口工厂类
@@ -12,18 +16,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class SqlEntityDealFactory {
 
+    //日志
+    private static Logger logger= LoggerFactory.getLogger(SqlEntityDealFactory.class);
+
     private SqlEntityDealInterface factory;
 
     @Autowired
     private MysqlEntityDeal mysqlEntityDeal;
 
-    public SqlEntityDealFactory(){
-        if(factory==null){
-            getInstance();
-        }
-    }
-
-    public void getInstance(){
+    @PostConstruct
+    public void init(){
         if(factory==null){
             Config config=Config.getInstance();
             if(config!=null){
@@ -34,7 +36,7 @@ public class SqlEntityDealFactory {
                         break;
                 }
             }else{
-                String info="初始化失败config配置缺失";
+                String info="初始化装配EntityDeal失败config配置缺失";
                 System.out.println(info);
             }
         }

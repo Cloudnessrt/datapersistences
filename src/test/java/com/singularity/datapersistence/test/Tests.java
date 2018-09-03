@@ -3,6 +3,7 @@ package com.singularity.datapersistence.test;
 
 import com.singularity.datapersistence.DatapersistenceApplication;
 import com.singularity.datapersistence.common.InitSqlTool;
+import com.singularity.datapersistence.service.inside.impl.MysqlEntityDeal;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ public class Tests {
     private Testservice testservice;
     @Autowired
     private InitSqlTool initSqlTool;
+
+    @Autowired
+    private MysqlEntityDeal mysqlEntityDeal;
     @Test
     public void testShow() throws Exception {
         String expectedResult="hello world!";
