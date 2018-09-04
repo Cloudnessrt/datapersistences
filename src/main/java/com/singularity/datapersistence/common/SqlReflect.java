@@ -6,6 +6,7 @@ import com.singularity.datapersistence.annotation.Id;
 import com.singularity.datapersistence.annotation.Ignore;
 import com.singularity.datapersistence.bean.ColInfo;
 import com.singularity.datapersistence.bean.SqlBasicInfo;
+import com.singularity.datapersistence.config.Config;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 

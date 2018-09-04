@@ -1,4 +1,4 @@
-package com.singularity.datapersistence.common;
+package com.singularity.datapersistence.config;
 
 import org.springframework.stereotype.Component;
 
@@ -11,7 +11,7 @@ public class Config {
     private static class InstanceHolder {
         private static final Config INSTANCE = new Config();
         {
-            INSTANCE.ConfigInit("com.singularity.datapersistence.db", "mysql", "mysql");
+            INSTANCE.ConfigInit("com.singularity.datapersistence.db", "mysql", "mysql",true);
         }
     }
 
@@ -26,6 +26,8 @@ public class Config {
     private String schema="users";
     //数据库类型
     private String dataBase="mysql";
+
+    private boolean printSql=true;
     //反馈信息
     private String info="Config配置加载";
 
@@ -35,10 +37,11 @@ public class Config {
      * @param schema 数据库名
      * @param dataBase 数据库类型
      */
-    public void ConfigInit(String path, String schema, String dataBase) {
+    public void ConfigInit(String path, String schema, String dataBase,boolean printSql) {
         this.path=path;
         this.dataBase=dataBase;
         this.schema=schema;
+        this.printSql=true;
         System.out.println(info+"配置内容为"+toString()+"\n");
     }
 
@@ -52,6 +55,14 @@ public class Config {
 
     public String getPath() {
         return path;
+    }
+
+    public boolean isPrintSql() {
+        return printSql;
+    }
+
+    public void setPrintSql(boolean printSql) {
+        this.printSql = printSql;
     }
 
     public void setPath(String path) {
@@ -73,6 +84,7 @@ public class Config {
                 "dataBase:"+getDataBase()+"," +
                 "schema:"+getSchema()+"," +
                 "path:"+getPath()+
+                "printSql:"+isPrintSql()+
                 "}");
         return stringBuilder.toString();
     }

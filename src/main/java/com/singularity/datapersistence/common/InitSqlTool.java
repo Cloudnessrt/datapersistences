@@ -1,6 +1,7 @@
 package com.singularity.datapersistence.common;
 
 
+import com.singularity.datapersistence.config.Config;
 import com.singularity.datapersistence.service.inside.impl.SqlCreateFactory;
 import com.singularity.datapersistence.service.inside.impl.SqlEntityDealFactory;
 import org.slf4j.Logger;
@@ -8,8 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -42,12 +41,9 @@ public class InitSqlTool {
                     sqlBasicCach.insertOrUpdateSqlBaseCash(sqlReflect.getTableInfoByClass(clazz));
                     Object object = clazz.newInstance();
                     sqlEntityDealFactory.insertSql(object);
-                    System.out.println(sqlCreateFactory.createInsertSql(object));
+                    sqlCreateFactory.createInsertSql(object);
                     sqlEntityDealFactory.updateSql(object);
-                    System.out.println(sqlCreateFactory.createUpdateSql(object));
-                    List a=new ArrayList();
-                    a.add(object);
-                    System.out.println(sqlCreateFactory.createInsertDataSql(a));
+                    sqlCreateFactory.createUpdateSql(object);
                 }
             }
         } catch (Exception e) {

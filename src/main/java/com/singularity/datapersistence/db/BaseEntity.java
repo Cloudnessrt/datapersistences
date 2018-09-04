@@ -23,7 +23,6 @@ public class BaseEntity {
     private Date lastModifyTime;//最后修改时间
 
     private ExistEnum isDel;//是否删除
-
     @Ignore
     private String isDelName;//是否删除名称
 

@@ -94,6 +94,15 @@ public class ExecInfo extends Exception{
         return new ExecInfo("",code,object,e);
     }
 
+    /**
+     * 设置异常
+     * @param code
+     * @param object
+     * @return
+     */
+    public static ExecInfo setExecInfo(String message,ConstantEnum code,  Object object){
+        return new ExecInfo(message,code,object,null);
+    }
 
 
     /**

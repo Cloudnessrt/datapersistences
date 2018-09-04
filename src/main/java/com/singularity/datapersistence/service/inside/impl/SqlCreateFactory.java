@@ -1,6 +1,6 @@
 package com.singularity.datapersistence.service.inside.impl;
 
-import com.singularity.datapersistence.common.Config;
+import com.singularity.datapersistence.config.Config;
 import com.singularity.datapersistence.service.inside.SqlCreateInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
