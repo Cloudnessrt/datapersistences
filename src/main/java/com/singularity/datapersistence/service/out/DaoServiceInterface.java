@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface DaoServiceInterface {
 
-    public <T> void insert(T t);
+    public <T> void insert(T t) throws Exception;
 
     public <T> void update(T t);
 

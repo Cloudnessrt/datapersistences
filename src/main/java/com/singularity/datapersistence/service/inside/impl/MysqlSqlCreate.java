@@ -2,6 +2,7 @@ package com.singularity.datapersistence.service.inside.impl;
 
 import com.singularity.datapersistence.bean.ColInfo;
 import com.singularity.datapersistence.bean.SqlBasicInfo;
+import com.singularity.datapersistence.common.Common;
 import com.singularity.datapersistence.common.Reflect;
 import com.singularity.datapersistence.common.SqlBasicCach;
 import com.singularity.datapersistence.service.inside.SqlCreateInterface;
@@ -11,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -47,7 +50,7 @@ public class MysqlSqlCreate implements SqlCreateInterface {
         for(ColInfo colInfo : sqlBasicInfo.getCol()){
             sb.append(dealDecorate(colInfo.getName().toLowerCase())+" , ");
         }
-        sbv.append(" {data}; ");
+        sbv.append(" "+ Common.insertPlaceholder+"; ");
         sb.delete(sb.toString().lastIndexOf(","),sb.length());
         sb.append(" ) ");
         sb.append(sbv);
@@ -119,7 +122,7 @@ public class MysqlSqlCreate implements SqlCreateInterface {
                     ColInfo colInfo=colInfos.get(i);
                     String fieldName= colInfo.getName();
                     Object o=Reflect.getFieldValueByName(fieldName,t);
-                    sb.append(o);
+                    sb.append("'"+getValue(o,colInfo.getType())+"'");
                     if(i!=colInfos.size()-1){
                         sb.append(",");
                     }
@@ -135,6 +138,17 @@ public class MysqlSqlCreate implements SqlCreateInterface {
         }else{
             throw new Exception("createInsertDataSql生成新增数据语句失败\n");
         }
+    }
+
+    private String getValue(Object o,Class clazz){
+        if(o==null){
+            return "";
+        }
+        if(clazz.equals(Date.class)){
+            Timestamp t = new Timestamp(((Date)o).getTime());
+            return t.toString();
+        }
+        return  o.toString();
     }
 
     private  String dealDecorate(String str){

@@ -17,6 +17,8 @@ import java.util.Set;
  */
 public class Common {
 
+    public static String insertPlaceholder="{data}";
+
     /**
      * 递归获取指定文件或者文件夹下的指定文件
      *

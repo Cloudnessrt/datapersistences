@@ -24,9 +24,10 @@ public class Tests {
     private MysqlEntityDeal mysqlEntityDeal;
     @Test
     public void testShow() throws Exception {
+        initSqlTool.init();
         String expectedResult="hello world!";
         testservice.query();
         testservice.save();
-        initSqlTool.init();
+
     }
 }

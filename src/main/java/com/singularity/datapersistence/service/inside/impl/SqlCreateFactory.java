@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -71,6 +72,19 @@ public class SqlCreateFactory {
      */
     public <T> String createInsertDataSql(List<T> objs)throws Exception{
         return factory.createInsertDataSql(objs);
+    }
+
+    /**
+     * 新增语句的数据部分
+     * @param objs
+     * @param <T>
+     * @return
+     * @throws Exception
+     */
+    public <T> String createInsertDataSql(T objs)throws Exception{
+        List list=new ArrayList();
+        list.add(objs);
+        return factory.createInsertDataSql(list);
     }
 
 }
