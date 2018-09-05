@@ -41,6 +41,18 @@ public class Testservice {
         daoService.insert(student);
     }
 
+    public void update() throws Exception {
+        Student student=new Student();
+        student.setBirthday(new Date());
+        student.setCreateTime(new Date());
+        student.setLastModifyTime(new Date());
+        student.setBirthday(new Date());
+        student.setId(UUID.randomUUID().toString().replace("-", "").toLowerCase());
+        student.setName("tch");
+        student.setYear(1);
+        daoService.update(student);
+    }
+
     public void query(){
         String sql ="select * from student ";
         List<Student> users = jdbcTemplate.query(sql,new BeanPropertyRowMapper<Student>(Student.class));

@@ -1,5 +1,6 @@
 package com.singularity.datapersistence.common;
 
+import com.singularity.datapersistence.bean.ColInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,13 +72,13 @@ public class Reflect {
     /**
      * 根据属性名获取属性值
      * */
-    public static Object getFieldValueByName(String fieldName, Object o) {
+    public static ColInfo getFieldValueByName(String fieldName, Object o) {
         try {
             String firstLetter = fieldName.substring(0, 1).toUpperCase();
             String getter = "get" + firstLetter + fieldName.substring(1);
             Method method = o.getClass().getMethod(getter, new Class[] {});
             Object value = method.invoke(o, new Object[] {});
-            return value;
+            return new ColInfo(fieldName,method.getReturnType(),value);
         } catch (Exception e) {
             String info=o.getClass().getTypeName()+"获取"+fieldName+"属性的值失败\n";
             System.out.println(info);

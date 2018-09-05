@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class SqlCreateFactory {
@@ -70,8 +68,8 @@ public class SqlCreateFactory {
      * @return
      * @throws Exception
      */
-    public <T> String createInsertDataSql(List<T> objs)throws Exception{
-        return factory.createInsertDataSql(objs);
+    public <T> String createInsertTempleSql(T objs)throws Exception{
+        return factory.createInsertTempleSql(objs);
     }
 
     /**
@@ -81,10 +79,8 @@ public class SqlCreateFactory {
      * @return
      * @throws Exception
      */
-    public <T> String createInsertDataSql(T objs)throws Exception{
-        List list=new ArrayList();
-        list.add(objs);
-        return factory.createInsertDataSql(list);
+    public <T> String createUpdateTempleSql(T objs)throws Exception{
+        return factory.createUpdateTempleSql(objs);
     }
 
 }

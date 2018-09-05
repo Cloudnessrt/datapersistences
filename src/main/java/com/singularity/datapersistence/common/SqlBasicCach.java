@@ -29,10 +29,18 @@ public class SqlBasicCach {
 
     /**
      * 获取表基础信息
-     * @param key
+     * @param key 表名
      */
     public  SqlBasicInfo getSqlCach(String key) {
         return sqlBaseCach.get(key);
+    }
+
+    /**
+     * 获取表基础信息
+     * @param object 类
+     */
+    public  SqlBasicInfo getSqlCach(Object object) {
+        return getSqlCach(object.getClass().getSimpleName().toLowerCase());
     }
 
 

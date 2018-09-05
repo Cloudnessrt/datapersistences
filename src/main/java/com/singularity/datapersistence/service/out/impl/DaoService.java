@@ -2,7 +2,6 @@ package com.singularity.datapersistence.service.out.impl;
 
 import com.singularity.datapersistence.bean.ExecInfo;
 import com.singularity.datapersistence.bean.SqlBasicInfo;
-import com.singularity.datapersistence.common.Common;
 import com.singularity.datapersistence.common.SqlBasicCach;
 import com.singularity.datapersistence.enums.ConstantEnum;
 import com.singularity.datapersistence.service.inside.impl.SqlCreateFactory;
@@ -45,17 +44,32 @@ public class DaoService implements DaoServiceInterface {
         String info="insert失败";
         try {
             sqlEntityDealFactory.insertSql(t);
-            String insertSql = sqlBasicInfo.getInsertSql().replace(Common.insertPlaceholder, sqlCreateFactory.createInsertDataSql(t));
+            String insertSql = sqlCreateFactory.createInsertSql(t);
             int[] result = jdbcTemplate.batchUpdate(insertSql);
             return ExecInfo.successExecInfo(result);
         }catch (Exception e){
-            logger.error(info);
+            logger.error(info,e);
         }
         return ExecInfo.setExecInfo(info, ConstantEnum.execErrorCode,t);
     }
 
     public <T> ExecInfo update(T t){
-        return ExecInfo.successExecInfo(t);
+        SqlBasicInfo sqlBasicInfo= sqlBasicCach.getSqlCach(t.getClass().getSimpleName().toLowerCase());
+        if(sqlBasicInfo==null){
+            String info=t.getClass()+"没有被@entity标记无法保存"+"\n";
+            logger.error(info);
+            return ExecInfo.setExecInfo(info, ConstantEnum.execErrorCode,t);
+        }
+        String info="update失败";
+        try {
+            sqlEntityDealFactory.updateSql(t);
+            String updateSql = sqlCreateFactory.createUpdateSql(t);
+            int[] result = jdbcTemplate.batchUpdate(updateSql);
+            return ExecInfo.successExecInfo(result);
+        }catch (Exception e){
+            logger.error(info,e);
+        }
+        return ExecInfo.setExecInfo(info, ConstantEnum.execErrorCode,t);
     }
 
     public <T> ExecInfo delete(T t){

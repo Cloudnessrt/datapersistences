@@ -10,6 +10,22 @@ public interface SqlCreateInterface {
      * @param <T>
      * @return
      */
+    public  <T> String createUpdateTempleSql(T object) throws Exception;
+
+    /**
+     * 新增语句
+     * @param object
+     * @param <T>
+     * @return
+     */
+    public <T> String createInsertTempleSql(T object) throws Exception;
+
+    /**
+     * 更新语句
+     * @param object
+     * @param <T>
+     * @return
+     */
     public  <T> String createUpdateSql(T object) throws Exception;
 
     /**
@@ -27,5 +43,7 @@ public interface SqlCreateInterface {
      * @return
      * @throws Exception
      */
-    public <T> String createInsertDataSql(List<T> objs)throws Exception;
+    public <T> String createInsertSql(List<T> objs)throws Exception;
+
+
 }

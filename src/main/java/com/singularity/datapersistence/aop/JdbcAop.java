@@ -29,7 +29,7 @@ public class JdbcAop {
     @Before("sqlLog()")
     public void deBefore(JoinPoint joinPoint) throws Throwable {
         Config config=Config.getInstance();
-        if(config.isPrintSql()){
+        if(config.isPrintSql()){//sql监控开关
             Object[] args = joinPoint.getArgs();//参数
             Signature signature = joinPoint.getSignature();//此处joinPoint的实现类是MethodInvocationProceedingJoinPoint
             MethodSignature methodSignature = (MethodSignature) signature;//获取参数名

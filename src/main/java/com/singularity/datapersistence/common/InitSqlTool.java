@@ -40,10 +40,8 @@ public class InitSqlTool {
                 if(SqlReflect.isEfficientClass(clazz)) {
                     sqlBasicCach.insertOrUpdateSqlBaseCash(sqlReflect.getTableInfoByClass(clazz));
                     Object object = clazz.newInstance();
-                    sqlEntityDealFactory.insertSql(object);
-                    sqlCreateFactory.createInsertSql(object);
-                    sqlEntityDealFactory.updateSql(object);
-                    sqlCreateFactory.createUpdateSql(object);
+                    sqlCreateFactory.createInsertTempleSql(object);
+                    sqlCreateFactory.createUpdateTempleSql(object);
                 }
             }
         } catch (Exception e) {

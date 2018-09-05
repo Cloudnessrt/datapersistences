@@ -13,8 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class MysqlSqlCreate implements SqlCreateInterface {
@@ -33,7 +37,7 @@ public class MysqlSqlCreate implements SqlCreateInterface {
      * @param <T>
      * @return
      */
-    public <T> String createInsertSql(T object) throws Exception {
+    public <T> String createInsertTempleSql(T object) throws Exception {
         if(object==null){
             throw new Exception("createInsertSql生成新增语句失败\n");
         }
@@ -65,7 +69,7 @@ public class MysqlSqlCreate implements SqlCreateInterface {
      * @param <T>
      * @return
      */
-    public  <T> String createUpdateSql(T object) throws Exception {
+    public  <T> String createUpdateTempleSql(T object) throws Exception {
         StringBuilder sb=new StringBuilder();
         if(object==null){
             throw new Exception("createUpdateSql生成更新语句失败！\n");
@@ -98,22 +102,37 @@ public class MysqlSqlCreate implements SqlCreateInterface {
 
     /**
      * 新增语句的数据部分
+     * @param object
+     * @param <T>
+     * @return
+     * @throws Exception
+     */
+    public <T> String createInsertSql(T object) throws Exception{
+        List<T> objs=new ArrayList<>();
+        objs.add(object);
+        return createInsertSql(objs);
+    }
+
+
+    /**
+     * 新增语句的数据部分
      * @param objs
      * @param <T>
      * @return
      * @throws Exception
      */
-    public <T> String createInsertDataSql(List<T> objs)throws Exception{
+    public <T> String createInsertSql(List<T> objs)throws Exception{
         if(objs==null  || objs.size()==0){
             throw new Exception("createInsertDataSql插入的数据不能为空");
         }
-        Class clazz=objs.get(0).getClass();
-        SqlBasicInfo sqlBasicInfo=sqlBasicCach.getSqlCach(clazz.getSimpleName().toLowerCase());
+        Object obj=objs.get(0);
+        SqlBasicInfo sqlBasicInfo=sqlBasicCach.getSqlCach(obj);
         if(sqlBasicInfo==null){
-            throw new Exception("createInsertDataSql生成新增数据语句失败,"+clazz.getSimpleName()+"没有增加entity注解\n");
+            throw new Exception("createInsertDataSql生成新增数据语句失败,"+obj.getClass()+"没有增加entity注解\n");
         }
         StringBuffer sb=new StringBuffer();
         List<ColInfo> colInfos= sqlBasicInfo.getCol();
+        String insertTemple=sqlBasicInfo.getInsertSql();
         for (int j = 0; j <=objs.size()-1 ; j++) {
             T t=objs.get(j);
             if(t!=null){
@@ -121,8 +140,7 @@ public class MysqlSqlCreate implements SqlCreateInterface {
                 for (int i = 0; i <=colInfos.size()-1 ; i++) {
                     ColInfo colInfo=colInfos.get(i);
                     String fieldName= colInfo.getName();
-                    Object o=Reflect.getFieldValueByName(fieldName,t);
-                    sb.append("'"+getValue(o,colInfo.getType())+"'");
+                    sb.append("'"+getValue(fieldName,t)+"'");
                     if(i!=colInfos.size()-1){
                         sb.append(",");
                     }
@@ -134,21 +152,50 @@ public class MysqlSqlCreate implements SqlCreateInterface {
             }
         }
         if(sb!=null){
-            return sb.toString();
+            return sqlBasicInfo.getInsertSql().replace(Common.insertPlaceholder, sb.toString());
         }else{
-            throw new Exception("createInsertDataSql生成新增数据语句失败\n");
+            return "";
         }
     }
 
-    private String getValue(Object o,Class clazz){
-        if(o==null){
+    /**
+     * 跟新语句的数据部分
+     * @param obj
+     * @param <T>
+     * @return
+     * @throws Exception
+     */
+    public <T> String createUpdateSql(T obj)throws Exception{
+        Map<String, Object> map=Common.BeanToMap(obj);
+        SqlBasicInfo sqlBasicInfo=sqlBasicCach.getSqlCach(obj);
+        if(sqlBasicInfo==null){
+            throw new Exception("createUpdateDataSql生成跟新数据语句失败,"+obj.getClass()+"没有增加entity注解\n");
+        }
+        Pattern pattern = Pattern.compile("\\{[a-zA-Z0-9]+\\}");// 匹配的模式
+        String updateTemple=sqlBasicInfo.getUpdateSql();
+        Matcher m = pattern.matcher(updateTemple);
+        int i = 1;
+        String rep="";
+        while (m.find()) {
+            rep=m.group(i);
+            updateTemple.replace(rep,getValue(rep,obj));
+            i++;
+        }
+        return updateTemple;
+    }
+
+    private String getValue(String fieldName,Object object){
+        if(object==null){
             return "";
         }
+        ColInfo colInfo= Reflect.getFieldValueByName(fieldName,object);
+        Class clazz=colInfo.getType();
+        Object value=colInfo.getValue();
         if(clazz.equals(Date.class)){
-            Timestamp t = new Timestamp(((Date)o).getTime());
+            Timestamp t = new Timestamp(((Date)value).getTime());
             return t.toString();
         }
-        return  o.toString();
+        return  value==null? null:value.toString();
     }
 
     private  String dealDecorate(String str){

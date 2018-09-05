@@ -2,15 +2,16 @@ package com.singularity.datapersistence.common;
 
 import com.singularity.datapersistence.db.BaseEntity;
 
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.Enumeration;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 公用类
@@ -18,6 +19,42 @@ import java.util.Set;
 public class Common {
 
     public static String insertPlaceholder="{data}";
+
+
+    /**
+     * javabean 转map
+     * @param obj 类
+     * @return
+     */
+    public static Map<String, Object> BeanToMap(Object obj) {
+
+        if(obj == null){
+            return null;
+        }
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            BeanInfo beanInfo = Introspector.getBeanInfo(obj.getClass());
+            PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+            for (PropertyDescriptor property : propertyDescriptors) {
+                String key = property.getName();
+
+                // 过滤class属性
+                if (!key.equals("class")) {
+                    // 得到property对应的getter方法
+                    Method getter = property.getReadMethod();
+                    Object value = getter.invoke(obj);
+
+                    map.put(key, value);
+                }
+
+            }
+        } catch (Exception e) {
+            System.out.println("BeanToMap Error " +obj.toString()+ e+"\n");
+        }
+
+        return map;
+
+    }
 
     /**
      * 递归获取指定文件或者文件夹下的指定文件
