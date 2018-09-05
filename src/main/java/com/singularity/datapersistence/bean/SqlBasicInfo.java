@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSON;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SqlBasicInfo {
+public class SqlBasicInfo implements Cloneable {
 
     private String schema;//表空间
     private String tableName;//表名
@@ -74,5 +74,11 @@ public class SqlBasicInfo {
                  "Col:"+JSON.toJSONString(col)+"," +
                 "}");
         return stringBuilder.toString();
+    }
+
+    @Override
+    public SqlBasicInfo clone() throws CloneNotSupportedException {
+        // TODO Auto-generated method stub
+        return (SqlBasicInfo)super.clone();
     }
 }

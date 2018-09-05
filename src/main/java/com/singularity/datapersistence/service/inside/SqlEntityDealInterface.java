@@ -2,6 +2,8 @@ package com.singularity.datapersistence.service.inside;
 
 import com.singularity.datapersistence.bean.ExecInfo;
 
+import java.util.List;
+
 /**
  * 实体处理接口
  */
@@ -26,7 +28,7 @@ public interface SqlEntityDealInterface {
      * @param object
      * @return
      */
-    public  ExecInfo insertSql(Object object);
+    public  ExecInfo insertSql(List object);
 
     /**
      * 更新

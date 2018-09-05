@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -41,14 +42,40 @@ public class Testservice {
         daoService.insert(student);
     }
 
-    public void update() throws Exception {
+    public void saveBatch() throws Exception {
+        List list=new ArrayList();
+
         Student student=new Student();
         student.setBirthday(new Date());
         student.setCreateTime(new Date());
         student.setLastModifyTime(new Date());
         student.setBirthday(new Date());
         student.setId(UUID.randomUUID().toString().replace("-", "").toLowerCase());
-        student.setName("tch");
+        student.setName("tchbatch");
+        student.setYear(12);
+
+        Student student2=new Student();
+        student2.setBirthday(new Date());
+        student2.setCreateTime(new Date());
+        student2.setLastModifyTime(new Date());
+        student2.setBirthday(new Date());
+        student2.setId(UUID.randomUUID().toString().replace("-", "").toLowerCase());
+        student2.setName("tchbatch");
+        student2.setYear(123);
+
+        list.add(student);
+        list.add(student2);
+        daoService.insertBatch(list);
+    }
+
+    public void update() throws Exception {
+        Student student=new Student();
+        student.setBirthday(new Date());
+        student.setCreateTime(new Date());
+        student.setLastModifyTime(new Date());
+        student.setBirthday(new Date());
+        student.setId("0d85d6341c574d97b623e00d928c6f4d");
+        student.setName("tch123");
         student.setYear(1);
         daoService.update(student);
     }

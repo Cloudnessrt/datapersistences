@@ -1,24 +1,26 @@
 package com.singularity.datapersistence.service.inside;
 
+import com.singularity.datapersistence.bean.SqlBasicInfo;
+
 import java.util.List;
 
 public interface SqlCreateInterface {
 
     /**
      * 更新语句
-     * @param object
+     * @param sqlBasicInfo
      * @param <T>
      * @return
      */
-    public  <T> String createUpdateTempleSql(T object) throws Exception;
+    public  <T> String createUpdateTempleSql(SqlBasicInfo sqlBasicInfo) throws Exception;
 
     /**
      * 新增语句
-     * @param object
+     * @param sqlBasicInfo
      * @param <T>
      * @return
      */
-    public <T> String createInsertTempleSql(T object) throws Exception;
+    public <T> String createInsertTempleSql(SqlBasicInfo sqlBasicInfo) throws Exception;
 
     /**
      * 更新语句

@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 实体处理接口工厂类
@@ -62,14 +64,25 @@ public class SqlEntityDealFactory {
         return factory.deleteSql(object);
     }
 
-
     /**
      * 新增
      * @param object
      * @return
      */
-    
+
     public  ExecInfo insertSql(Object object){
+        List objects=new ArrayList();
+        objects.add(object);
+        return factory.insertSql(objects);
+    }
+
+    /**
+     * 新增批量
+     * @param object
+     * @return
+     */
+    
+    public  ExecInfo insertSql(List object){
         return factory.insertSql(object);
     }
 

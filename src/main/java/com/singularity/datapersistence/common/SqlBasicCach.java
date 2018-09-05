@@ -17,6 +17,7 @@ import java.util.Map;
  */
 @Component
 public class SqlBasicCach {
+
     //日志
     private static Logger logger= LoggerFactory.getLogger(SqlBasicCach.class);
 
@@ -32,7 +33,13 @@ public class SqlBasicCach {
      * @param key 表名
      */
     public  SqlBasicInfo getSqlCach(String key) {
-        return sqlBaseCach.get(key);
+
+        try {
+            return sqlBaseCach.get(key).clone();
+        } catch (CloneNotSupportedException e) {
+            logger.error("获取表基础信息失败"+key+"\n",e);
+        }
+        return null;
     }
 
     /**
@@ -53,10 +60,11 @@ public class SqlBasicCach {
 
         try {
             if(sqlBasicInfo!=null){
+
                 this.sqlBaseCach.put(sqlBasicInfo.getTableName().toLowerCase(), sqlBasicInfo);
             }
         }catch (Exception e){
-            return ExecInfo.setExecInfo("修改数据库基础信息异常"+sqlBasicInfo, ConstantEnum.execErrorCode,sqlBasicInfo+"\n",e);
+            return ExecInfo.setExecInfo("加载数据库基础信息异常"+sqlBasicInfo, ConstantEnum.execErrorCode,sqlBasicInfo+"\n",e);
         }
         return ExecInfo.successExecInfo(sqlBasicInfo);
     }

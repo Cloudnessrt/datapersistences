@@ -14,5 +14,5 @@ public interface DaoServiceInterface {
 
     public <T> ExecInfo insertBatch(List<T> ts);
 
-    public ExecInfo query(String sql);
+    public <T> ExecInfo query(String sql);
 }

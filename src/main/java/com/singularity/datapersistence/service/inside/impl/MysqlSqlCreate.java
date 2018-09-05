@@ -6,7 +6,6 @@ import com.singularity.datapersistence.common.Common;
 import com.singularity.datapersistence.common.Reflect;
 import com.singularity.datapersistence.common.SqlBasicCach;
 import com.singularity.datapersistence.service.inside.SqlCreateInterface;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,20 +32,15 @@ public class MysqlSqlCreate implements SqlCreateInterface {
 
     /**
      * 新增语句
-     * @param object
+     * @param sqlBasicInfo
      * @param <T>
      * @return
      */
-    public <T> String createInsertTempleSql(T object) throws Exception {
-        if(object==null){
-            throw new Exception("createInsertSql生成新增语句失败\n");
+    public <T> String createInsertTempleSql(SqlBasicInfo sqlBasicInfo) throws Exception {
+        if(sqlBasicInfo==null){
+            throw new Exception("createUpdateSql生成更新语句失败！\n");
         }
         StringBuilder sb=new StringBuilder();
-        String tableName=object.getClass().getSimpleName().toLowerCase();
-        SqlBasicInfo sqlBasicInfo=sqlBasicCach.getSqlCach(tableName);
-        if(sqlBasicInfo==null){
-            throw new Exception("createInsertSql生成新增语句失败,"+object.getClass().getName()+"没有增加entity注解\n");
-        }
         sb.append(" insert into ");
         sb.append(getTableNameInfo(sqlBasicInfo)+"(");
         //用于拼接values中的'?'个数
@@ -54,51 +48,14 @@ public class MysqlSqlCreate implements SqlCreateInterface {
         for(ColInfo colInfo : sqlBasicInfo.getCol()){
             sb.append(dealDecorate(colInfo.getName().toLowerCase())+" , ");
         }
-        sbv.append(" "+ Common.insertPlaceholder+"; ");
+        sbv.append(" "+ Common.insertPlaceholder+" ; ");
         sb.delete(sb.toString().lastIndexOf(","),sb.length());
         sb.append(" ) ");
         sb.append(sbv);
-        sb.append(";");
-        sqlBasicInfo.setInsertSql(sb.toString());
         return sb.toString();
     }
 
-    /**
-     * 更新语句
-     * @param object
-     * @param <T>
-     * @return
-     */
-    public  <T> String createUpdateTempleSql(T object) throws Exception {
-        StringBuilder sb=new StringBuilder();
-        if(object==null){
-            throw new Exception("createUpdateSql生成更新语句失败！\n");
-        }
-        SqlBasicInfo sqlBasicInfo=sqlBasicCach.getSqlCach(object.getClass().getSimpleName().toLowerCase());
-        if(object==null){
-            throw new Exception("createUpdateSql生成更新语句失败,"+object.getClass().getName()+"没有标注entity注解\n");
-        }
-        if(StringUtils.isEmpty(sqlBasicInfo.getPrimaryKey())){
-            throw new Exception("createUpdateSql生成更新语句失败,"+object.getClass().getName()+"没有标注id注解\n");
-        }
-        sb.append(" update ");
-        sb.append(getTableNameInfo(sqlBasicInfo));
-        sb.append(" set ");
-        StringBuffer sqlw = new StringBuffer(" where 1=1 ");
-        for(ColInfo colInfo:sqlBasicInfo.getCol()){
-            //主键
-            if(sqlBasicInfo.getPrimaryKey().equals(colInfo.getName().toLowerCase())){
-                sqlw.append(" and "+dealDecorate(colInfo.getName().toLowerCase())+" = ? ");
-            }else{
-                sb.append(" "+dealDecorate(colInfo.getName())+"= {"+colInfo.getName().toLowerCase()+"} ,");
-            }
-        }
-        sb.delete(sb.toString().lastIndexOf(","),sb.length());
-        sb.append(sqlw);
-        sb.append(";");
-        sqlBasicInfo.setUpdateSql(sb.toString());
-        return sb.toString();
-    }
+
 
     /**
      * 新增语句的数据部分
@@ -140,7 +97,7 @@ public class MysqlSqlCreate implements SqlCreateInterface {
                 for (int i = 0; i <=colInfos.size()-1 ; i++) {
                     ColInfo colInfo=colInfos.get(i);
                     String fieldName= colInfo.getName();
-                    sb.append("'"+getValue(fieldName,t)+"'");
+                    sb.append(getValue(fieldName,t));
                     if(i!=colInfos.size()-1){
                         sb.append(",");
                     }
@@ -158,6 +115,37 @@ public class MysqlSqlCreate implements SqlCreateInterface {
         }
     }
 
+
+    /**
+     * 更新语句
+     * @param sqlBasicInfo
+     * @param <T>
+     * @return
+     */
+    public  <T> String createUpdateTempleSql(SqlBasicInfo sqlBasicInfo) throws Exception {
+        StringBuilder sb=new StringBuilder();
+        if(sqlBasicInfo==null){
+            throw new Exception("createUpdateSql生成更新语句失败！\n");
+        }
+        sb.append(" update ");
+        sb.append(getTableNameInfo(sqlBasicInfo));
+        sb.append(" set ");
+        StringBuffer sqlw = new StringBuffer(" where 1=1 ");
+        for(ColInfo colInfo:sqlBasicInfo.getCol()){
+            //主键
+            if(sqlBasicInfo.getPrimaryKey().equals(colInfo.getName())){
+                sqlw.append(" and {"+colInfo.getName()+"} ");
+            }else{
+                sb.append(" {"+colInfo.getName()+"} ,");
+            }
+        }
+        sb.delete(sb.toString().lastIndexOf(","),sb.length());
+        sb.append(sqlw);
+        sb.append(";");
+        return sb.toString();
+    }
+
+
     /**
      * 跟新语句的数据部分
      * @param obj
@@ -174,30 +162,59 @@ public class MysqlSqlCreate implements SqlCreateInterface {
         Pattern pattern = Pattern.compile("\\{[a-zA-Z0-9]+\\}");// 匹配的模式
         String updateTemple=sqlBasicInfo.getUpdateSql();
         Matcher m = pattern.matcher(updateTemple);
-        int i = 1;
         String rep="";
         while (m.find()) {
-            rep=m.group(i);
-            updateTemple.replace(rep,getValue(rep,obj));
-            i++;
+            rep=m.group(0).replace("{","").replace("}","");
+            updateTemple=updateTemple.replace("{"+rep+"}",updatePlaceholder(rep,obj));
         }
         return updateTemple;
     }
 
-    private String getValue(String fieldName,Object object){
-        if(object==null){
-            return "";
-        }
-        ColInfo colInfo= Reflect.getFieldValueByName(fieldName,object);
-        Class clazz=colInfo.getType();
-        Object value=colInfo.getValue();
-        if(clazz.equals(Date.class)){
-            Timestamp t = new Timestamp(((Date)value).getTime());
-            return t.toString();
-        }
-        return  value==null? null:value.toString();
+    /**
+     * 更新语句的占位符
+     * @param feild 属性名
+     * @param obj 实例
+     * @return
+     * @throws Exception
+     */
+    private String updatePlaceholder(String feild,Object obj){
+        String result=" "+dealDecorate(feild)+" = "+getValue(feild,obj);
+        return result;
     }
 
+    /**
+     * 获取值
+     * @param fieldName 属性名
+     * @param object 实例
+     * @return
+     */
+    private String getValue(String fieldName,Object object){
+        if (object == null) {
+            return "";
+        }
+        Object value=null;
+        ColInfo colInfo = Reflect.getFieldValueByName(fieldName, object);
+        if(colInfo!=null){
+            Class clazz = colInfo.getType();
+            value = colInfo.getValue();
+            if (clazz.equals(Date.class)) {
+                if(value!=null){
+                    Timestamp t = new Timestamp(((Date) value).getTime());
+                    value = t.toString();
+                }
+            }
+        }else{
+            logger.error(fieldName+"在"+object.getClass()+"获取值失败\n");
+        }
+        return value == null ? null : "'" + value.toString() + "'";
+    }
+
+
+    /**
+     * 添加转换符
+     * @param str 字段
+     * @return
+     */
     private  String dealDecorate(String str){
         return "`"+str.toLowerCase()+"`";
     }

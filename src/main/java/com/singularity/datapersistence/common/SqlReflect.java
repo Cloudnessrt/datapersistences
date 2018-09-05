@@ -7,7 +7,11 @@ import com.singularity.datapersistence.annotation.Ignore;
 import com.singularity.datapersistence.bean.ColInfo;
 import com.singularity.datapersistence.bean.SqlBasicInfo;
 import com.singularity.datapersistence.config.Config;
+import com.singularity.datapersistence.service.inside.impl.SqlCreateFactory;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
@@ -21,7 +25,10 @@ import java.util.List;
 @Component
 public class SqlReflect {
 
-
+    //日志
+    private static Logger logger= LoggerFactory.getLogger(SqlReflect.class);
+    @Autowired
+    private SqlCreateFactory sqlCreateFactory;
 
     /**
      * 获取实体类
@@ -91,6 +98,12 @@ public class SqlReflect {
             }
         }catch (Exception e){
             System.out.printf(clazz.getName()+"获取有效属性失败\n",e);
+        }
+        try {
+            sqlBasicInfo.setInsertSql(sqlCreateFactory.createInsertTempleSql(sqlBasicInfo));
+            sqlBasicInfo.setUpdateSql(sqlCreateFactory.createUpdateTempleSql(sqlBasicInfo));
+        } catch (Exception e) {
+            logger.error(clazz.getName()+"生成sql模版异常\n",e);
         }
         return sqlBasicInfo;
     }

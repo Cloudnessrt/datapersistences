@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class MysqlEntityDeal implements SqlEntityDealInterface {
 
@@ -40,18 +42,17 @@ public class MysqlEntityDeal implements SqlEntityDealInterface {
 
     /**
      * 新增
-     * @param object
+     * @param objects
      * @return
      */
-    public  ExecInfo insertSql(Object object){
+    public  ExecInfo insertSql(List objects){
         ExecInfo execInfo;
-        if(Common.isBaseEntityChildren(object) ){
-            execInfo= ExecInfo.successExecInfo(object);
-
-        }else{
-            execInfo=ExecInfo.setExecInfo(ConstantEnum.notBaseEntityErrorCode,object,null);
+        for(Object item:objects){
+            if(!Common.isBaseEntityChildren(item) ){
+                return ExecInfo.setExecInfo(ConstantEnum.notBaseEntityErrorCode,item,null);
+            }
         }
-        return execInfo;
+        return ExecInfo.successExecInfo(objects);
     }
 
     /**

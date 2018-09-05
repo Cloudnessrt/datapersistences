@@ -1,9 +1,8 @@
 package com.singularity.datapersistence.common;
 
 
+import com.singularity.datapersistence.bean.SqlBasicInfo;
 import com.singularity.datapersistence.config.Config;
-import com.singularity.datapersistence.service.inside.impl.SqlCreateFactory;
-import com.singularity.datapersistence.service.inside.impl.SqlEntityDealFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +25,7 @@ public class InitSqlTool {
     @Autowired
     private SqlReflect sqlReflect;
 
-    @Autowired
-    private SqlEntityDealFactory sqlEntityDealFactory;
-    @Autowired
-    private SqlCreateFactory sqlCreateFactory;
+
 
     public void init() throws Exception {
         Config config=Config.getInstance();
@@ -38,10 +34,9 @@ public class InitSqlTool {
             Set<Class> classes = Common.getClasses(webBaseRealPath);//包下的所有类
             for (Class clazz:classes) {
                 if(SqlReflect.isEfficientClass(clazz)) {
-                    sqlBasicCach.insertOrUpdateSqlBaseCash(sqlReflect.getTableInfoByClass(clazz));
                     Object object = clazz.newInstance();
-                    sqlCreateFactory.createInsertTempleSql(object);
-                    sqlCreateFactory.createUpdateTempleSql(object);
+                    SqlBasicInfo sqlBasicInfo=sqlReflect.getTableInfoByClass(clazz);
+                    sqlBasicCach.insertOrUpdateSqlBaseCash(sqlBasicInfo);
                 }
             }
         } catch (Exception e) {

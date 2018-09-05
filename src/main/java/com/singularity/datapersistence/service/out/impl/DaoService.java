@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 @Service
 public class DaoService implements DaoServiceInterface {
@@ -35,28 +36,15 @@ public class DaoService implements DaoServiceInterface {
     protected JdbcTemplate jdbcTemplate;
 
     public <T> ExecInfo insert(T t) {
-        SqlBasicInfo sqlBasicInfo= sqlBasicCach.getSqlCach(t.getClass().getSimpleName().toLowerCase());
-        if(sqlBasicInfo==null){
-            String info=t.getClass()+"没有被@entity标记无法保存"+"\n";
-            logger.error(info);
-            return ExecInfo.setExecInfo(info, ConstantEnum.execErrorCode,t);
-        }
-        String info="insert失败";
-        try {
-            sqlEntityDealFactory.insertSql(t);
-            String insertSql = sqlCreateFactory.createInsertSql(t);
-            int[] result = jdbcTemplate.batchUpdate(insertSql);
-            return ExecInfo.successExecInfo(result);
-        }catch (Exception e){
-            logger.error(info,e);
-        }
-        return ExecInfo.setExecInfo(info, ConstantEnum.execErrorCode,t);
+        List<T> ts=new ArrayList<>();
+        ts.add(t);
+        return insertBatch(ts);
     }
 
     public <T> ExecInfo update(T t){
         SqlBasicInfo sqlBasicInfo= sqlBasicCach.getSqlCach(t.getClass().getSimpleName().toLowerCase());
         if(sqlBasicInfo==null){
-            String info=t.getClass()+"没有被@entity标记无法保存"+"\n";
+            String info=t.getClass()+"没有被@entity标记无法执行更新"+"\n";
             logger.error(info);
             return ExecInfo.setExecInfo(info, ConstantEnum.execErrorCode,t);
         }
@@ -73,14 +61,31 @@ public class DaoService implements DaoServiceInterface {
     }
 
     public <T> ExecInfo delete(T t){
-        return ExecInfo.successExecInfo(t);
+
+        return update(t);
     }
 
     public <T> ExecInfo insertBatch(List<T> ts){
-        return ExecInfo.successExecInfo(ts);
+        T t=ts.get(0);
+        SqlBasicInfo sqlBasicInfo= sqlBasicCach.getSqlCach(t.getClass().getSimpleName().toLowerCase());
+        if(sqlBasicInfo==null){
+            String info=t.getClass()+"没有被@entity标记无法执行保存"+"\n";
+            logger.error(info);
+            return ExecInfo.setExecInfo(info, ConstantEnum.execErrorCode,t);
+        }
+        String info="insert失败";
+        try {
+            sqlEntityDealFactory.insertSql(ts);
+            String insertSql = sqlCreateFactory.createInsertSql(ts);
+            int[] result = jdbcTemplate.batchUpdate(insertSql);
+            return ExecInfo.successExecInfo(result);
+        }catch (Exception e){
+            logger.error(info,e);
+        }
+        return ExecInfo.setExecInfo(info, ConstantEnum.execErrorCode,ts);
     }
 
-    public ExecInfo query(String sql){
+    public <T> ExecInfo query(String sql){
         return ExecInfo.successExecInfo(sql);
     }
 }

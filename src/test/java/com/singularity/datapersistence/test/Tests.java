@@ -28,6 +28,8 @@ public class Tests {
         String expectedResult="hello world!";
         testservice.query();
         testservice.save();
+        testservice.update();
+        testservice.saveBatch();
 
     }
 }
