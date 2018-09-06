@@ -5,7 +5,6 @@ import com.singularity.datapersistence.db.Student;
 import com.singularity.datapersistence.service.out.DaoServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -82,13 +81,7 @@ public class Testservice {
 
     public void query(){
         String sql ="select * from student ";
-        List<Student> users = jdbcTemplate.query(sql,new BeanPropertyRowMapper<Student>(Student.class));
-        Student user= users.get(0);
-        System.out.println("jdbcTemplate -->"+user.toString()+"\n");
-    }
-
-    public void test() throws Exception {
-        initSqlTool.init();
+        daoService.query(sql,Student.class);
     }
 
 }

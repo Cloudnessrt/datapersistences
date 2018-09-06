@@ -6,13 +6,43 @@ import java.util.List;
 
 public interface DaoServiceInterface {
 
+    /**
+     * 新增
+     * @param t
+     * @param <T>
+     * @return
+     */
     public <T> ExecInfo insert(T t);
 
-    public <T> ExecInfo update(T t);
-
-    public <T> ExecInfo delete(T t);
-
+    /**
+     * 新增集合方式
+     * @param ts
+     * @param <T>
+     * @return
+     */
     public <T> ExecInfo insertBatch(List<T> ts);
 
-    public <T> ExecInfo query(String sql);
+    /**
+     * 修改
+     * @param t
+     * @param <T>
+     * @return
+     */
+    public <T> ExecInfo update(T t);
+
+    /**
+     * 删除
+     * @param t
+     * @param <T>
+     * @return
+     */
+    public <T> ExecInfo delete(T t);
+
+    /**
+     * 查询
+     * @param sql
+     * @param <T>
+     * @return
+     */
+    public <T> List<T> query(String sql,Class<T> clazz);
 }

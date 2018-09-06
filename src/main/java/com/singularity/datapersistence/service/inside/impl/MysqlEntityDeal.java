@@ -17,7 +17,6 @@ public class MysqlEntityDeal implements SqlEntityDealInterface {
     private static Logger logger= LoggerFactory.getLogger(MysqlEntityDeal.class);
 
     public MysqlEntityDeal() {
-        System.out.println("123");
     }
 
     /**
