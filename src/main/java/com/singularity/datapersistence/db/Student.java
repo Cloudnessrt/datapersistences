@@ -35,13 +35,20 @@ public class Student extends BaseEntity {
     }
 
     public Date getBirthday() {
-        return birthday;
+
+        if (birthday == null)
+        {
+            return null;
+        }
+        return (Date)birthday.clone() ;
     }
 
     public void setBirthday(Date birthday) {
-        this.birthday = birthday;
+        if (birthday == null)
+        {
+            this.birthday = null;
+        } else {
+            this.birthday = (Date)birthday.clone();
+        }
     }
-
-
-
 }

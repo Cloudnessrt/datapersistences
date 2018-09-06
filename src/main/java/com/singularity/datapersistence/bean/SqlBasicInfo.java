@@ -5,12 +5,18 @@ import com.alibaba.fastjson.JSON;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 表基本信息
+ */
 public class SqlBasicInfo implements Cloneable {
-
-    private String schema;//表空间
-    private String tableName;//表名
-    private String primaryKey;//主键名
-    private List<ColInfo> col=new ArrayList<>();//列
+    //表空间
+    private String schema;
+    //表名
+    private String tableName;
+    //主键名
+    private String primaryKey;
+    //列
+    private List<ColInfo> col=new ArrayList<>();
     private String insertSql;
     private String updateSql;
 

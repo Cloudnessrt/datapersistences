@@ -11,7 +11,7 @@ public class Config {
     private static class InstanceHolder {
         private static final Config INSTANCE = new Config();
         {
-            INSTANCE.ConfigInit("com.singularity.datapersistence.db", "mysql", "mysql",true);
+            INSTANCE.configInit("com.singularity.datapersistence.db", "mysql", "mysql",true);
         }
     }
 
@@ -27,7 +27,7 @@ public class Config {
     //数据库类型
     private String dataBase="mysql";
 
-    private boolean printSql=true;
+    private boolean printSql=false;
     //反馈信息
     private String info="Config配置加载";
 
@@ -37,7 +37,7 @@ public class Config {
      * @param schema 数据库名
      * @param dataBase 数据库类型
      */
-    public void ConfigInit(String path, String schema, String dataBase,boolean printSql) {
+    public void configInit(String path, String schema, String dataBase, boolean printSql) {
         this.path=path;
         this.dataBase=dataBase;
         this.schema=schema;

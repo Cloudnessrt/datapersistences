@@ -15,7 +15,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,8 +26,8 @@ public class MysqlSqlCreate implements SqlCreateInterface {
 
     @Autowired
     private SqlBasicCach sqlBasicCach;
-
-
+    // 匹配的模式
+    private static Pattern pattern = Pattern.compile("\\{[a-zA-Z0-9]+\\}");
 
     /**
      * 新增语句
@@ -36,6 +35,7 @@ public class MysqlSqlCreate implements SqlCreateInterface {
      * @param <T>
      * @return
      */
+    @Override
     public <T> String createInsertTempleSql(SqlBasicInfo sqlBasicInfo) throws Exception {
         if(sqlBasicInfo==null){
             throw new Exception("createUpdateSql生成更新语句失败！\n");
@@ -48,7 +48,7 @@ public class MysqlSqlCreate implements SqlCreateInterface {
         for(ColInfo colInfo : sqlBasicInfo.getCol()){
             sb.append(dealDecorate(colInfo.getName().toLowerCase())+" , ");
         }
-        sbv.append(" "+ Common.insertPlaceholder+" ; ");
+        sbv.append(" "+ Common.INSERT_PLACEHOLDER +" ; ");
         sb.delete(sb.toString().lastIndexOf(","),sb.length());
         sb.append(" ) ");
         sb.append(sbv);
@@ -64,6 +64,7 @@ public class MysqlSqlCreate implements SqlCreateInterface {
      * @return
      * @throws Exception
      */
+    @Override
     public <T> String createInsertSql(T object) throws Exception{
         List<T> objs=new ArrayList<>();
         objs.add(object);
@@ -78,6 +79,7 @@ public class MysqlSqlCreate implements SqlCreateInterface {
      * @return
      * @throws Exception
      */
+    @Override
     public <T> String createInsertSql(List<T> objs)throws Exception{
         if(objs==null  || objs.size()==0){
             throw new Exception("createInsertDataSql插入的数据不能为空");
@@ -89,7 +91,6 @@ public class MysqlSqlCreate implements SqlCreateInterface {
         }
         StringBuffer sb=new StringBuffer();
         List<ColInfo> colInfos= sqlBasicInfo.getCol();
-        String insertTemple=sqlBasicInfo.getInsertSql();
         for (int j = 0; j <=objs.size()-1 ; j++) {
             T t=objs.get(j);
             if(t!=null){
@@ -108,11 +109,8 @@ public class MysqlSqlCreate implements SqlCreateInterface {
                 sb.append(",");
             }
         }
-        if(sb!=null){
-            return sqlBasicInfo.getInsertSql().replace(Common.insertPlaceholder, sb.toString());
-        }else{
-            return "";
-        }
+        return sqlBasicInfo.getInsertSql().replace(Common.INSERT_PLACEHOLDER, sb.toString());
+
     }
 
 
@@ -122,6 +120,7 @@ public class MysqlSqlCreate implements SqlCreateInterface {
      * @param <T>
      * @return
      */
+    @Override
     public  <T> String createUpdateTempleSql(SqlBasicInfo sqlBasicInfo) throws Exception {
         StringBuilder sb=new StringBuilder();
         if(sqlBasicInfo==null){
@@ -153,13 +152,13 @@ public class MysqlSqlCreate implements SqlCreateInterface {
      * @return
      * @throws Exception
      */
+    @Override
     public <T> String createUpdateSql(T obj)throws Exception{
-        Map<String, Object> map=Common.BeanToMap(obj);
         SqlBasicInfo sqlBasicInfo=sqlBasicCach.getSqlCach(obj);
         if(sqlBasicInfo==null){
             throw new Exception("createUpdateDataSql生成跟新数据语句失败,"+obj.getClass()+"没有增加entity注解\n");
         }
-        Pattern pattern = Pattern.compile("\\{[a-zA-Z0-9]+\\}");// 匹配的模式
+
         String updateTemple=sqlBasicInfo.getUpdateSql();
         Matcher m = pattern.matcher(updateTemple);
         String rep="";

@@ -1,6 +1,5 @@
 package com.singularity.datapersistence.test;
 
-import com.singularity.datapersistence.common.InitSqlTool;
 import com.singularity.datapersistence.db.Student;
 import com.singularity.datapersistence.service.out.DaoServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,47 +24,45 @@ public class Testservice {
     protected JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private InitSqlTool initSqlTool;
-
-    @Autowired
     protected DaoServiceInterface daoService;
 
+    @Transient
     public void save() throws Exception {
-        Student student=new Student();
-        student.setBirthday(new Date());
-        student.setCreateTime(new Date());
-        student.setLastModifyTime(new Date());
-        student.setBirthday(new Date());
-        student.setId(UUID.randomUUID().toString().replace("-", "").toLowerCase());
-        student.setName("tch");
-        student.setYear(1);
-        daoService.insert(student);
+        long saveOneStart=System.currentTimeMillis();
+        for (int i = 0; i <10000 ; i++) {
+            Student student=new Student();
+            student.setBirthday(new Date());
+            student.setCreateTime(new Date());
+            student.setLastModifyTime(new Date());
+            student.setBirthday(new Date());
+            student.setId(UUID.randomUUID().toString().replace("-", "").toLowerCase());
+            student.setName("tch");
+            student.setYear(1);
+            daoService.insert(student);
+        }
+        long saveOneEnd=System.currentTimeMillis();
+        System.out.println("saveOne："+(saveOneEnd-saveOneStart));
     }
 
+    @Transient
     public void saveBatch() throws Exception {
         List list=new ArrayList();
-
-        Student student=new Student();
-        student.setBirthday(new Date());
-        student.setCreateTime(new Date());
-        student.setLastModifyTime(new Date());
-        student.setBirthday(new Date());
-        student.setId(UUID.randomUUID().toString().replace("-", "").toLowerCase());
-        student.setName("tchbatch");
-        student.setYear(12);
-
-        Student student2=new Student();
-        student2.setBirthday(new Date());
-        student2.setCreateTime(new Date());
-        student2.setLastModifyTime(new Date());
-        student2.setBirthday(new Date());
-        student2.setId(UUID.randomUUID().toString().replace("-", "").toLowerCase());
-        student2.setName("tchbatch");
-        student2.setYear(123);
-
-        list.add(student);
-        list.add(student2);
+        long saveOneStart=System.currentTimeMillis();
+        for (int i = 0; i <10000 ; i++) {
+            Student student=new Student();
+            student.setBirthday(new Date());
+            student.setCreateTime(new Date());
+            student.setLastModifyTime(new Date());
+            student.setBirthday(new Date());
+            student.setId(UUID.randomUUID().toString().replace("-", "").toLowerCase());
+            student.setName("tch");
+            student.setYear(1);
+            list.add(student);
+        }
+        long saveOneEnd=System.currentTimeMillis();
         daoService.insertBatch(list);
+        System.out.println("saveBatch："+ (saveOneEnd-saveOneStart));
+
     }
 
     public void update() throws Exception {
@@ -80,7 +78,7 @@ public class Testservice {
     }
 
     public void query(){
-        String sql ="select * from student ";
+        String sql ="select * from student limit 10 ";
         daoService.query(sql,Student.class);
     }
 

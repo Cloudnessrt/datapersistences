@@ -25,7 +25,6 @@ public class Tests {
     @Test
     public void testShow() throws Exception {
         initSqlTool.init();
-        String expectedResult="hello world!";
         testservice.query();
         testservice.save();
         testservice.update();

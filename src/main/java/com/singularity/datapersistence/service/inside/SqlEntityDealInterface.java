@@ -1,6 +1,6 @@
 package com.singularity.datapersistence.service.inside;
 
-import com.singularity.datapersistence.bean.ExecInfo;
+import com.singularity.datapersistence.bean.ExecInfoException;
 
 import java.util.List;
 
@@ -14,28 +14,28 @@ public interface SqlEntityDealInterface {
      * @param object
      * @return
      */
-    public ExecInfo selectSql(Object object);
+    public ExecInfoException selectSql(Object object);
 
     /**
      * 删除
      * @param object
      * @return
      */
-    public  ExecInfo deleteSql(Object object);
+    public ExecInfoException deleteSql(Object object);
 
     /**
      * 新增
      * @param object
      * @return
      */
-    public  ExecInfo insertSql(List object);
+    public ExecInfoException insertSql(List object);
 
     /**
      * 更新
      * @param object
      * @return
      */
-    public  ExecInfo updateSql(Object object);
+    public ExecInfoException updateSql(Object object);
 
 
 }

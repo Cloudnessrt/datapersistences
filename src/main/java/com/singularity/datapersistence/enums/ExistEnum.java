@@ -1,5 +1,8 @@
 package com.singularity.datapersistence.enums;
 
+/**
+ * 删除枚举
+ */
 public enum ExistEnum {
 
     del(1,"删除"),

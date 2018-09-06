@@ -1,7 +1,7 @@
 package com.singularity.datapersistence.common;
 
 
-import com.singularity.datapersistence.bean.ExecInfo;
+import com.singularity.datapersistence.bean.ExecInfoException;
 import com.singularity.datapersistence.bean.SqlBasicInfo;
 import com.singularity.datapersistence.enums.ConstantEnum;
 import org.slf4j.Logger;
@@ -33,13 +33,7 @@ public class SqlBasicCach {
      * @param key 表名
      */
     public  SqlBasicInfo getSqlCach(String key) {
-
-        try {
-            return sqlBaseCach.get(key).clone();
-        } catch (CloneNotSupportedException e) {
-            logger.error("获取表基础信息失败"+key+"\n",e);
-        }
-        return null;
+        return sqlBaseCach.get(key);
     }
 
     /**
@@ -56,7 +50,7 @@ public class SqlBasicCach {
      * @param sqlBasicInfo 数据库基础信息
      * @return
      */
-    public  ExecInfo insertOrUpdateSqlBaseCash(SqlBasicInfo sqlBasicInfo){
+    public ExecInfoException insertOrUpdateSqlBaseCash(SqlBasicInfo sqlBasicInfo){
 
         try {
             if(sqlBasicInfo!=null){
@@ -64,9 +58,9 @@ public class SqlBasicCach {
                 this.sqlBaseCach.put(sqlBasicInfo.getTableName().toLowerCase(), sqlBasicInfo);
             }
         }catch (Exception e){
-            return ExecInfo.setExecInfo("加载数据库基础信息异常"+sqlBasicInfo, ConstantEnum.execErrorCode,sqlBasicInfo+"\n",e);
+            return ExecInfoException.setExecInfo("加载数据库基础信息异常"+sqlBasicInfo, ConstantEnum.execErrorCode,sqlBasicInfo+"\n",e);
         }
-        return ExecInfo.successExecInfo(sqlBasicInfo);
+        return ExecInfoException.successExecInfo(sqlBasicInfo);
     }
 
 
@@ -75,14 +69,14 @@ public class SqlBasicCach {
      * @param sqlBasicInfo 数据库基础信息
      * @return
      */
-    public ExecInfo deleteSqlBaseCash(SqlBasicInfo sqlBasicInfo){
+    public ExecInfoException deleteSqlBaseCash(SqlBasicInfo sqlBasicInfo){
 
         try {
             this.sqlBaseCach.remove(sqlBasicInfo.getTableName().toLowerCase());
         }catch (Exception e){
-            return ExecInfo.setExecInfo("删除数据库基础信息失败"+sqlBasicInfo.toString(), ConstantEnum.execErrorCode,sqlBasicInfo+"\n",e);
+            return ExecInfoException.setExecInfo("删除数据库基础信息失败"+sqlBasicInfo.toString(), ConstantEnum.execErrorCode,sqlBasicInfo+"\n",e);
         }
-        return ExecInfo.successExecInfo(sqlBasicInfo);
+        return ExecInfoException.successExecInfo(sqlBasicInfo);
     }
 
 

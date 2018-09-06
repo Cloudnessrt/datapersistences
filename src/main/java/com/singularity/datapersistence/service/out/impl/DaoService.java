@@ -1,6 +1,6 @@
 package com.singularity.datapersistence.service.out.impl;
 
-import com.singularity.datapersistence.bean.ExecInfo;
+import com.singularity.datapersistence.bean.ExecInfoException;
 import com.singularity.datapersistence.bean.SqlBasicInfo;
 import com.singularity.datapersistence.common.SqlBasicCach;
 import com.singularity.datapersistence.enums.ConstantEnum;
@@ -42,7 +42,8 @@ public class DaoService implements DaoServiceInterface {
      * @param <T>
      * @return
      */
-    public <T> ExecInfo insert(T t) {
+    @Override
+    public <T> ExecInfoException insert(T t) {
         List<T> ts=new ArrayList<>();
         ts.add(t);
         return insertBatch(ts);
@@ -54,24 +55,25 @@ public class DaoService implements DaoServiceInterface {
      * @param <T>
      * @return
      */
-    public <T> ExecInfo insertBatch(List<T> ts){
+    @Override
+    public <T> ExecInfoException insertBatch(List<T> ts){
         T t=ts.get(0);
         SqlBasicInfo sqlBasicInfo= sqlBasicCach.getSqlCach(t.getClass().getSimpleName().toLowerCase());
         if(sqlBasicInfo==null){
             String info=t.getClass()+"没有被@entity标记无法执行保存"+"\n";
             logger.error(info);
-            return ExecInfo.setExecInfo(info, ConstantEnum.execErrorCode,t);
+            return ExecInfoException.setExecInfo(info, ConstantEnum.execErrorCode,t);
         }
         String info="insert失败";
         try {
             sqlEntityDealFactory.insertSql(ts);
             String insertSql = sqlCreateFactory.createInsertSql(ts);
             int[] result = jdbcTemplate.batchUpdate(insertSql);
-            return ExecInfo.successExecInfo(result);
+            return ExecInfoException.successExecInfo(result);
         }catch (Exception e){
             logger.error(info,e);
         }
-        return ExecInfo.setExecInfo(info, ConstantEnum.execErrorCode,ts);
+        return ExecInfoException.setExecInfo(info, ConstantEnum.execErrorCode,ts);
     }
 
     /**
@@ -80,23 +82,26 @@ public class DaoService implements DaoServiceInterface {
      * @param <T>
      * @return
      */
-    public <T> ExecInfo update(T t){
+    @Override
+    public <T> ExecInfoException update(T t){
         SqlBasicInfo sqlBasicInfo= sqlBasicCach.getSqlCach(t.getClass().getSimpleName().toLowerCase());
         if(sqlBasicInfo==null){
             String info=t.getClass()+"没有被@entity标记无法执行更新"+"\n";
             logger.error(info);
-            return ExecInfo.setExecInfo(info, ConstantEnum.execErrorCode,t);
+            return ExecInfoException.setExecInfo(info, ConstantEnum.execErrorCode,t);
         }
         String info="update失败";
         try {
-            sqlEntityDealFactory.updateSql(t);
-            String updateSql = sqlCreateFactory.createUpdateSql(t);
-            int[] result = jdbcTemplate.batchUpdate(updateSql);
-            return ExecInfo.successExecInfo(result);
+            ExecInfoException execInfoException =sqlEntityDealFactory.updateSql(t);
+            if(execInfoException.getResult()){
+                String updateSql = sqlCreateFactory.createUpdateSql(t);
+                int[] result = jdbcTemplate.batchUpdate(updateSql);
+                return ExecInfoException.successExecInfo(result);
+            }
         }catch (Exception e){
             logger.error(info,e);
         }
-        return ExecInfo.setExecInfo(info, ConstantEnum.execErrorCode,t);
+        return ExecInfoException.setExecInfo(info, ConstantEnum.execErrorCode,t);
     }
 
     /**
@@ -105,7 +110,8 @@ public class DaoService implements DaoServiceInterface {
      * @param <T>
      * @return
      */
-    public <T> ExecInfo delete(T t){
+    @Override
+    public <T> ExecInfoException delete(T t){
 
         return update(t);
     }
@@ -117,6 +123,7 @@ public class DaoService implements DaoServiceInterface {
      * @param clazz
      * @return
      */
+    @Override
     public <T> List<T> query(String sql,Class<T> clazz){
         List<T> objs = jdbcTemplate.query(sql,new BeanPropertyRowMapper<T>(clazz));
         return objs;

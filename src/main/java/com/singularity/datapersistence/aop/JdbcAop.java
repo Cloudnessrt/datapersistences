@@ -29,10 +29,13 @@ public class JdbcAop {
     @Before("sqlLog()")
     public void deBefore(JoinPoint joinPoint) throws Throwable {
         Config config=Config.getInstance();
-        if(config.isPrintSql()){//sql监控开关
-            Object[] args = joinPoint.getArgs();//参数
-            Signature signature = joinPoint.getSignature();//此处joinPoint的实现类是MethodInvocationProceedingJoinPoint
-            MethodSignature methodSignature = (MethodSignature) signature;//获取参数名
+        //sql监控开关
+        if(config.isPrintSql()){
+            //参数
+            Object[] args = joinPoint.getArgs();
+            Signature signature = joinPoint.getSignature();
+            //获取参数名
+            MethodSignature methodSignature = (MethodSignature) signature;
             HashMap map=new HashMap();
             for(int i=0;i<methodSignature.getParameterNames().length;i++){
                 map.put(methodSignature.getParameterNames()[i],args[i]==null? "":JSON.toJSONString(args[i]));

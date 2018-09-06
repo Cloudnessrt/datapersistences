@@ -1,5 +1,8 @@
 package com.singularity.datapersistence.enums;
 
+/**
+ * 方法执行情况枚举
+ */
 public enum ConstantEnum {
 
     execSuccessCode("1","正常"),
@@ -39,15 +42,8 @@ public enum ConstantEnum {
         return this.key;
     }
 
-    public void setKey(String key) {
-        this.key = key;
-    }
-
     public String getText() {
         return this.text;
     }
 
-    public void setText(String text) {
-        this.text = text;
-    }
 }

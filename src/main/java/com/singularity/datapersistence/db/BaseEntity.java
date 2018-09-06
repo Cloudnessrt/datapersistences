@@ -13,18 +13,23 @@ public class BaseEntity {
 
     @Id
     private String id;
-
-    private Date createTime;//创建时间
-    private String createPerson;//创建人名
-    private String createPersonId;//创建人
-
-    private String lastModifyPerson;//最后修改人名
-    private String lastModifyPersonId;//最后修改人
-    private Date lastModifyTime;//最后修改时间
-
-    private ExistEnum isDel;//是否删除
+    //创建时间
+    private Date createTime;
+    //创建人名
+    private String createPerson;
+    //创建人
+    private String createPersonId;
+    //最后修改人名
+    private String lastModifyPerson;
+    //最后修改人
+    private String lastModifyPersonId;
+    //最后修改时间
+    private Date lastModifyTime;
+    //是否删除
+    private ExistEnum isDel;
+    //是否删除名称
     @Ignore
-    private String isDelName;//是否删除名称
+    private String isDelName;
 
 
     public BaseEntity() {
@@ -32,11 +37,20 @@ public class BaseEntity {
     }
 
     public Date getCreateTime() {
-        return createTime;
+        if (createTime == null)
+        {
+            return null;
+        }
+        return (Date)createTime.clone();
     }
 
     public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
+        if (createTime == null)
+        {
+            this.createTime = null;
+        } else {
+            this.createTime = (Date)createTime.clone();
+        }
     }
 
     public String getCreatePerson() {
@@ -72,11 +86,20 @@ public class BaseEntity {
     }
 
     public Date getLastModifyTime() {
-        return lastModifyTime;
+        if (lastModifyTime == null)
+        {
+            return null;
+        }
+        return (Date)lastModifyTime.clone();
     }
 
     public void setLastModifyTime(Date lastModifyTime) {
-        this.lastModifyTime = lastModifyTime;
+        if (lastModifyTime == null)
+        {
+            this.lastModifyTime = null;
+        } else {
+            this.lastModifyTime = (Date)lastModifyTime.clone();
+        }
     }
 
     public ExistEnum getIsDel() {

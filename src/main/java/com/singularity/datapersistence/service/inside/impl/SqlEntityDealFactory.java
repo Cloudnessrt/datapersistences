@@ -1,6 +1,6 @@
 package com.singularity.datapersistence.service.inside.impl;
 
-import com.singularity.datapersistence.bean.ExecInfo;
+import com.singularity.datapersistence.bean.ExecInfoException;
 import com.singularity.datapersistence.config.Config;
 import com.singularity.datapersistence.service.inside.SqlEntityDealInterface;
 import org.slf4j.Logger;
@@ -50,7 +50,7 @@ public class SqlEntityDealFactory {
      * @return
      */
     
-    public ExecInfo selectSql(Object object){
+    public ExecInfoException selectSql(Object object){
         return factory.selectSql(object);
     }
 
@@ -60,7 +60,7 @@ public class SqlEntityDealFactory {
      * @return
      */
     
-    public  ExecInfo deleteSql(Object object){
+    public ExecInfoException deleteSql(Object object){
         return factory.deleteSql(object);
     }
 
@@ -70,7 +70,7 @@ public class SqlEntityDealFactory {
      * @return
      */
 
-    public  ExecInfo insertSql(Object object){
+    public ExecInfoException insertSql(Object object){
         List objects=new ArrayList();
         objects.add(object);
         return factory.insertSql(objects);
@@ -82,7 +82,7 @@ public class SqlEntityDealFactory {
      * @return
      */
     
-    public  ExecInfo insertSql(List object){
+    public ExecInfoException insertSql(List object){
         return factory.insertSql(object);
     }
 
@@ -92,7 +92,7 @@ public class SqlEntityDealFactory {
      * @return
      */
     
-    public  ExecInfo updateSql(Object object){
+    public ExecInfoException updateSql(Object object){
         return factory.updateSql(object);
     }
 

@@ -18,7 +18,7 @@ import java.util.*;
  */
 public class Common {
 
-    public static String insertPlaceholder="{data}";
+    public static final String INSERT_PLACEHOLDER ="{data}";
 
 
     /**
@@ -26,7 +26,7 @@ public class Common {
      * @param obj 类
      * @return
      */
-    public static Map<String, Object> BeanToMap(Object obj) {
+    public static Map<String, Object> beanToMap(Object obj) {
 
         if(obj == null){
             return null;
@@ -39,7 +39,7 @@ public class Common {
                 String key = property.getName();
 
                 // 过滤class属性
-                if (!key.equals("class")) {
+                if (!"class".equals(key)) {
                     // 得到property对应的getter方法
                     Method getter = property.getReadMethod();
                     Object value = getter.invoke(obj);
@@ -141,19 +141,23 @@ public class Common {
         File dir = new File(packagePath);
         // 如果不存在或者 也不是目录就直接返回
         if (!dir.exists() || !dir.isDirectory()) {
-            // log.warn("用户定义包名 " + packageName + " 下没有任何文件");
             return;
         }
         // 如果存在 就获取包下的所有文件 包括目录
         File[] dirfiles = dir.listFiles(new FileFilter() {
             // 自定义过滤规则 如果可以循环(包含子目录) 或则是以.class结尾的文件(编译好的java类文件)
+            @Override
             public boolean accept(File file) {
                 return (recursive && file.isDirectory())
                         || (file.getName().endsWith(".class"));
             }
         });
+        if(dirfiles==null){
+            return;
+        }
         // 循环所有文件
         for (File file : dirfiles) {
+
             // 如果是目录 则继续扫描
             if (file.isDirectory()) {
                 findAndAddClassesInPackageByFile(packageName + "."
@@ -165,11 +169,8 @@ public class Common {
                         file.getName().length() - 6);
                 try {
                     // 添加到集合中去
-                    //classes.add(Class.forName(packageName + '.' + className));
-                    //经过回复同学的提醒，这里用forName有一些不好，会触发static方法，没有使用classLoader的load干净
                     classes.add(Thread.currentThread().getContextClassLoader().loadClass(packageName + '.' + className));
                 } catch (ClassNotFoundException e) {
-                    // log.error("添加用户自定义视图类错误 找不到此类的.class文件");
                     e.printStackTrace();
                 }
             }

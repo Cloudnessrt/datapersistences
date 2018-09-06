@@ -1,6 +1,6 @@
 package com.singularity.datapersistence.service.inside.impl;
 
-import com.singularity.datapersistence.bean.ExecInfo;
+import com.singularity.datapersistence.bean.ExecInfoException;
 import com.singularity.datapersistence.common.Common;
 import com.singularity.datapersistence.enums.ConstantEnum;
 import com.singularity.datapersistence.service.inside.SqlEntityDealInterface;
@@ -24,9 +24,10 @@ public class MysqlEntityDeal implements SqlEntityDealInterface {
      * @param object
      * @return
      */
-    public ExecInfo selectSql(Object object){
-        ExecInfo execInfo= ExecInfo.successExecInfo(object);
-        return execInfo;
+    @Override
+    public ExecInfoException selectSql(Object object){
+        ExecInfoException execInfoException = ExecInfoException.successExecInfo(object);
+        return execInfoException;
     }
 
     /**
@@ -34,9 +35,10 @@ public class MysqlEntityDeal implements SqlEntityDealInterface {
      * @param object
      * @return
      */
-    public  ExecInfo deleteSql(Object object){
-        ExecInfo execInfo= ExecInfo.successExecInfo(object);
-        return execInfo;
+    @Override
+    public ExecInfoException deleteSql(Object object){
+        ExecInfoException execInfoException = ExecInfoException.successExecInfo(object);
+        return execInfoException;
     }
 
     /**
@@ -44,14 +46,15 @@ public class MysqlEntityDeal implements SqlEntityDealInterface {
      * @param objects
      * @return
      */
-    public  ExecInfo insertSql(List objects){
-        ExecInfo execInfo;
+    @Override
+    public ExecInfoException insertSql(List objects){
+        ExecInfoException execInfoException;
         for(Object item:objects){
             if(!Common.isBaseEntityChildren(item) ){
-                return ExecInfo.setExecInfo(ConstantEnum.notBaseEntityErrorCode,item,null);
+                return ExecInfoException.setExecInfo(ConstantEnum.notBaseEntityErrorCode,item,null);
             }
         }
-        return ExecInfo.successExecInfo(objects);
+        return ExecInfoException.successExecInfo(objects);
     }
 
     /**
@@ -59,9 +62,10 @@ public class MysqlEntityDeal implements SqlEntityDealInterface {
      * @param object
      * @return
      */
-    public  ExecInfo updateSql(Object object){
-        ExecInfo execInfo= ExecInfo.successExecInfo(object);
-        return execInfo;
+    @Override
+    public ExecInfoException updateSql(Object object){
+        ExecInfoException execInfoException = ExecInfoException.successExecInfo(object);
+        return execInfoException;
     }
 
 }

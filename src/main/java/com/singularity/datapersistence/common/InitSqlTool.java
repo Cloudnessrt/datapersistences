@@ -29,9 +29,11 @@ public class InitSqlTool {
 
     public void init() throws Exception {
         Config config=Config.getInstance();
-        String webBaseRealPath = config.getPath();//需要获取的类的路径
+        //需要获取的类的路径
+        String webBaseRealPath = config.getPath();
         try {
-            Set<Class> classes = Common.getClasses(webBaseRealPath);//包下的所有类
+            //包下的所有类
+            Set<Class> classes = Common.getClasses(webBaseRealPath);
             for (Class clazz:classes) {
                 if(SqlReflect.isEfficientClass(clazz)) {
                     Object object = clazz.newInstance();
